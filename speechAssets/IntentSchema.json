@@ -1,0 +1,32 @@
+{
+  "intents": [
+    {
+      "intent": "OneshotVoterGuideIntent",
+      "slots": [
+      {
+        "name": "MeasureOneshot",
+        "type": "LIST_OF_MEASURES"
+      }
+     ]
+    },
+    {
+      "intent": "DialogVoterGuideIntent",
+      "slots": [
+        {
+          "name": "MeasureDialog",
+          "type": "LIST_OF_MEASURES"
+        }
+      ]
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    },
+    {
+      "intent": "AMAZON.CancelIntent"
+    }
+  ]
+}
+

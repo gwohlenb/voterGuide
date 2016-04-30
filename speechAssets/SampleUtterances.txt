@@ -1,0 +1,6 @@
+OneshotVoterGuideIntent how should I vote on measure {MeasureOneshot}
+OneshotVoterGuideIntent measure {MeasureOneshot}
+OneshotVoterGuideIntent {MeasureOneshot}
+
+DialogVoterGuideIntent {MeasureDialog}
+DialogVoterGuideIntent measure {MeasureDialog}
