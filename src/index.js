@@ -12,22 +12,32 @@
  * Examples:
  *
  * One-shot model:
- *  User: "Alexa ask voterguide how I should vote on Measure K"
+ *   User: "Alexa ask voter guider how to vote on measure K" (question style)
+ *  Alexa: "(Measure K recommendation)" 
+ *   User: "Alexa ask voter guider the guidance on measure K" (noun style)
  *  Alexa: "(Measure K recommendation)"
+ *   User: "Alexa ask voter guider to guide me on measure K" (verb style)
+ *  Alexa: "(Measure K recommendation)"
+ *   User: "Alexa ask voter guider how to vote on measure zz" (invalid measure)
+ *  Alexa: "I'm sorry, I currently do not have any voting guidance for measure ZZ" 
+*   Alexa: "You can say measure K or measure AA and I will provide you voting guidance on that measure."
+ * 
  *
  * Dialog model:
- *  User:  "Alexa open voterguide"
- *  Alexa: "Welcome to the Voter Guide.  Do you want guidance on Measure K or Measure AA?"
+ *  User:  "Alexa open voter guider"
+ * Alexa:  "Welcome to the Voter Guider.  You can say measure K or measure AA and I will provide you voting guidance on that measure.  Or you can say exit."
  *  User:  "Measure AA"
- *  Alexa: (Measure AA recommendation)
- *  Alexa: "Is there another measure you'd like guidance on?"
- *  User:  "alexa K"
+ * Alexa:  (Measure AA recommendation)
+ *  User:  "Alexa Measure K"
  * Alexa:  (Measure K recommendation)
- * Alexa:  "Is there another measure you'd like guidance on?"
- * Alexa:  "alexa zz"
- * Alexa:  "I'm sorry, I currently do not have any guidance for measure zz"
- * Alexa:  "Is there another measure you'd like guidance on?"
- *  User:  "alexa stop"
+ * Alexa:  "You can say measure K or measure AA and I will provide you voting guidance on that measure.  Or you can say exit."
+ *  User:  "Alexa stop"
+ * 
+ * Dialog model #2:
+ *  User: "Alexa open voter guider and guide me on measure AA"
+ * Alexa: (Measure AA recommendation) 
+ * Alexa: "You can say measure K or measure AA and I will provide you voting guidance on that measure.  Or you can say exit."
+ *  User: "exit"
  */
 
 'use strict';
@@ -105,12 +115,12 @@ VoterGuideHelper.prototype.intentHandlers = {
     },
 
     "AMAZON.StopIntent": function (intent, session, response) {
-        var speechOutput = "Goodbye";
+        var speechOutput = "Goodbye from the voter guider";
         response.tell(speechOutput);
     },
 
-    "AMAZON.CancelIntent": function (intent, session, response) {
-        var speechOutput = "Goodbye";
+    "AMAZON.CancelIntent": function (intent, session, response) {                     
+        var speechOutput = "Goodbye from the voter guider";
         response.tell(speechOutput);
     }
 };
@@ -119,15 +129,15 @@ VoterGuideHelper.prototype.intentHandlers = {
 
 function handleWelcomeRequest(response) {
     var speechOutput = {
-            speech: "Welcome to the Voter Guide.  Do you want guidance on Measure K or Measure AA?",
+            speech: "Welcome to the Voter Guider.  You can say measure K or measure AA and I will provide you voting guidance on that measure.  Or you can say exit.",
             type: AlexaSkill.speechOutputType.PLAIN_TEXT
         },
         repromptOutput = {
-            speech: "Do you want guidance on Measure K or Measure AA?",
+            speech: "You can say measure K or measure AA and I will provide you voting guidance on that measure.  Or you can say exit.",
             type: AlexaSkill.speechOutputType.PLAIN_TEXT
         };
 
-    // keep the session open and ask for a measure
+    // keep the session open and ask for a measure (or to exit)
     response.ask(speechOutput, repromptOutput);
 }
 
@@ -135,12 +145,17 @@ function handleWelcomeRequest(response) {
 
 function handleHelpRequest(response) {
     var speechOutput = { 
-            speech: "Do you want guidance on Measure K or Measure AA? " + "Or you can say exit.",
+            speech: "I am here to help.  You can say measure K or measure AA and I will provide you voting guidance on that measure.  For example, you can say ask voter guider how to vote on measure K.  Or you can say exit.",
             type: AlexaSkill.speechOutputType.PLAIN_TEXT
-    };      
+    };
+
+    var repromptOutput = { 
+            speech: "You can say measure K or measure AA and I will provide you voting guidance on that measure.  Or you can say exit.",
+            type: AlexaSkill.speechOutputType.PLAIN_TEXT
+    };         
 
     // keep the session open and ask for a measure (or to exit)
-    response.ask(speechOutput, speechOutput);
+    response.ask(speechOutput, repromptOutput);
 }
 
 // Dialog request function
@@ -152,50 +167,64 @@ function handleVoterGuideDialogRequest(intent, session, response) {
 
     if (measureSlot && measureSlot.value) {
         measureName = measureSlot.value.toLowerCase();
+    } else {
+        measureSlot.value = "";
     }
 
-    var cardTitle = "Guidance for measure " + measureSlot.value,
+    var cardTitle = "Guidance for Measure " +  	  				   measureSlot.value.toUpperCase(),
         answer = answers[measureName],
         speechOutput,
         repromptOutput;
-    
-    console.log(measureName); 
-    console.log(answer);     
+
+        repromptOutput = {
+            speech: "You can say measure K or measure AA and I will provide you voting guidance on that measure.  Or you can say exit.",
+            type: AlexaSkill.speechOutputType.PLAIN_TEXT
+        }; 
+
+    console.log('measureName = ' + measureName); 
+    console.log('measureSlot.value = ' + measureSlot.value); 
+    console.log('answer = ' + answer);     
     if (measureName == "k" || measureName == "aa") {
         speechOutput = {
             speech: "<speak>" + 
                       answer + 
-                      "<s>Is there another measure you'd like guidance on?</s>" +
+                      "<s>You can say measure K or measure AA and I will provide you voting guidance on that measure.</s>" +
+                      "<s>Or you can say exit.</s>" +
                     "</speak>",
             type: AlexaSkill.speechOutputType.SSML
         };
 
     // keep the session open and provide the single guidance the user requested
-        response.askWithCard(speechOutput, cardTitle, answer);
+        response.askWithCard(speechOutput, repromptOutput, cardTitle, answer);
     } 
     else {
         if (measureName) {
             speechOutput = {
-                speech: "I'm sorry, I currently do not have any guidance for measure " + measureName,
+                speech: "I'm sorry, I currently do not have any voting guidance for Measure " + measureName.toUpperCase() + ".  You can say measure K or measure AA and I will provide you voting guidance on that measure.  Or you can say exit.",
                 type: AlexaSkill.speechOutputType.PLAIN_TEXT
             };
         }
         else {
             speechOutput = {
-                speech: "I'm sorry, I currently do not know that measure.",
+                speech: "I'm sorry, I currently do not know that measure.  You can say measure K or measure AA and I will provide you voting guidance on that measure.  Or you can say exit.",
                 type: AlexaSkill.speechOutputType.PLAIN_TEXT
             };
-        }
+        }     
+
         // keep the session open and ask the user if there is another measure they want guidance on.
-        response.tellWithCard(speechOutput, cardTitle, measureName);
+        response.askWithCard(speechOutput, repromptOutput, cardTitle, measureName);
     }
 }
 
 // No slot dialog request function
 
 function handleNoSlotDialogRequest(intent, session, response) {
-   var speechOutput = "The slot was empty.  Goodbye.";
-   response.tell(speechOutput);
+    var speechOutput = {
+                speech: "I'm sorry, I currently do not know that measure.  You can say measure K or measure AA and I will provide you voting guidance on that measure.",
+                type: AlexaSkill.speechOutputType.PLAIN_TEXT
+        };
+    // End the session.
+    response.tell(speechOutput);
 }
 
 // One shot request function
@@ -207,35 +236,41 @@ function handleOneshotVoterGuideRequest(intent, session, response) {
 
     if (measureSlot && measureSlot.value) {
         measureName = measureSlot.value.toLowerCase();
+    } else {
+        measureSlot.value = "";
     }
     
-    var cardTitle = "Guidance for measure " + measureSlot.value,
+    var cardTitle = "Guidance for Measure " +              	  	   measureSlot.value.toUpperCase(),
         answer = answers[measureName],
         speechOutput,
         repromptOutput;
     
-    console.log(measureName); 
-    console.log(answer);     
+    console.log('measureName = ' + measureName); 
+    console.log('measureSlot.value = ' + measureSlot.value); 
+    console.log('answer = ' + answer);   
     if (measureName == "k" || measureName == "aa") {
         speechOutput = {
             speech: answer,
             type: AlexaSkill.speechOutputType.PLAIN_TEXT
         };
+        // End the session.
         response.tellWithCard(speechOutput, cardTitle, answer);
     }
     else {
         if (measureName) {
             speechOutput = {
-                speech: "I'm sorry, I currently do not have any guidance for measure " + measureName,
+                speech: "I'm sorry, I currently do not have any voting guidance for measure " + measureName.toUpperCase() + ".  You can say measure K or measure AA and I will provide you voting guidance on that measure.",
                 type: AlexaSkill.speechOutputType.PLAIN_TEXT
             };
         }
         else {
             speechOutput = {
-                speech: "I'm sorry, I currently do not know that measure.",
+                speech: "I'm sorry, I currently do not know that measure.  You can say measure K or measure AA and I will provide you voting guidance on that measure.",
                 type: AlexaSkill.speechOutputType.PLAIN_TEXT
             };
         }
+
+        // End the session.
         response.tellWithCard(speechOutput, cardTitle, measureName);
     } 
 }

@@ -12,6 +12,6 @@ module.exports = {
 
     "k": "Please vote NO on measure K.  Voting NO stops the developer plan to build 43 homes in the southeastern Pleasanton Hills.  But more importantly it prevents the pro-growth majority City Council from liberally interpreting projects in the future and further damaging our environment.",
 
-    "aa": "Please vote YES.  Very few ballot measures provide a regional and sustainable revenue of funding to protect our wildlife habitat, enhance our wetlands, reduce pollution and trash on our coastline while increasing public access and recreational areas and opportunities for our constituents.  The modest $1 per month per parcel tax would provide funds to make a big difference, representing an investment in the future of the Bay for generations to come. Both Alameda County Supervisor Scott Haggerty and Congressman Eric Swalwell have endorsed the measure."
+    "aa": "Please vote YES on measure AA.  Very few ballot measures provide a regional and sustainable revenue of funding to protect our wildlife habitat, enhance our wetlands, reduce pollution and trash on our coastline while increasing public access and recreational areas and opportunities for our constituents.  The modest $1 per month per parcel tax would provide funds to make a big difference, representing an investment in the future of the Bay for generations to come. Both Alameda County Supervisor Scott Haggerty and Congressman Eric Swalwell have endorsed the measure."
 
 };
