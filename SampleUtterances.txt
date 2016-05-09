@@ -1,0 +1,5 @@
+OneshotVoterGuideIntent how to vote on measure {MeasureOneshot}
+OneshotVoterGuideIntent the guidance on measure {MeasureOneshot}
+
+DialogVoterGuideIntent to guide me on measure {MeasureDialog}
+DialogVoterGuideIntent and guide me on measure {MeasureDialog}
